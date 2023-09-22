@@ -28,6 +28,9 @@ jobs:
       # Checkout push-to-registry action github repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v2
+        with: 
+          submodules: true
+          clean: true
       - name: Install latest podman
         if: matrix.install_latest
         run: |
