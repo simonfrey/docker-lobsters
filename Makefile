@@ -1,11 +1,11 @@
 #!/usr/bin/make -f
 
 SHELL                   := /usr/bin/env bash
-REPO_NAMESPACE          ?= utensils
+REPO_NAMESPACE          ?= simonfrey
 REPO_USERNAME           ?= jamesbrink
 REPO_API_URL            ?= https://hub.docker.com/v2
 IMAGE_NAME              ?= lobsters
-BASE_IMAGE              ?= ruby:2.7-alpine
+BASE_IMAGE              ?= docker.io/ruby:2.7-alpine
 DEVELOPER_BUILD         ?= false
 VERSION                 := $(shell git describe --tags --abbrev=0 2>/dev/null || git rev-parse --abbrev-ref HEAD 2>/dev/null)
 VCS_REF                 := $(shell git rev-parse --short HEAD 2>/dev/null || echo "0000000")
@@ -15,10 +15,10 @@ BUILD_DATE              := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
 .PHONY: default
 default: build
 
-# Build the docker image
+# Build the podman image
 .PHONY: build
 build:
-	docker build \
+	podman build \
 		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg DEVELOPER_BUILD=$(DEVELOPER_BUILD) \
@@ -32,20 +32,20 @@ build:
 # List built images
 .PHONY: list
 list:
-	docker images $(REPO_NAMESPACE)/$(IMAGE_NAME) --filter "dangling=false"
+	podman images $(REPO_NAMESPACE)/$(IMAGE_NAME) --filter "dangling=false"
 
 # Run any tests
 .PHONY: test
 test:
-	docker run -t $(REPO_NAMESPACE)/$(IMAGE_NAME) env | grep VERSION | grep $(VERSION)
+	podman run -t $(REPO_NAMESPACE)/$(IMAGE_NAME) env | grep VERSION | grep $(VERSION)
 
 # Push images to repo
 .PHONY: push
 push:
-	echo "$$REPO_PASSWORD" | docker login -u "$(REPO_USERNAME)" --password-stdin; \
-		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest; \
-		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF); \
-		docker push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION);
+	echo "$$REPO_PASSWORD" | podman login -u "$(REPO_USERNAME)" --password-stdin; \
+		podman push  $(REPO_NAMESPACE)/$(IMAGE_NAME):latest; \
+		podman push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VCS_REF); \
+		podman push  $(REPO_NAMESPACE)/$(IMAGE_NAME):$(VERSION);
 
 # Update README on registry
 .PHONY: push-readme
@@ -69,4 +69,4 @@ update-micro-badge:
 # Remove existing images
 .PHONY: clean
 clean:
-	docker rmi $$(docker images $(REPO_NAMESPACE)/$(IMAGE_NAME) --format="{{.Repository}}:{{.Tag}}") --force
+	podman rmi $$(podman images $(REPO_NAMESPACE)/$(IMAGE_NAME) --format="{{.Repository}}:{{.Tag}}") --force
