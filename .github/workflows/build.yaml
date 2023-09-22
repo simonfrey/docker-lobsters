@@ -9,10 +9,11 @@ on:
     - cron: '0 0 * * *'  # every day at midnight
 env:
     IMAGE_NAME: lobsters-container
-    IMAGE_TAGS: v1 ${{ github.sha }}
+    IMAGE_TAGS: v1 ${{ github.sha }} latest
     IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
     REGISTRY_USER: ${{ github.actor }}
     REGISTRY_PASSWORD: ${{ github.token }}
+    BASE_IMAGE: docker.io/ruby:2.7-alpine
 
 jobs:
   push-ghcr:
@@ -21,18 +22,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        install_latest: [ true, false ]
+        install_latest: [ true ]
 
     steps:
       # Checkout push-to-registry action github repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@v2
-
       - name: Install latest podman
         if: matrix.install_latest
         run: |
-          bash .github/install_latest_podman.sh
-
+          sudo apt-get update
+          sudo apt-get -y upgrade
+          sudo apt-get -y install podman
       # Build image using Buildah action
       - name: Build Image
         id: build_image
@@ -40,13 +41,9 @@ jobs:
         with:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAGS }}
-          base-image: busybox:latest
-          entrypoint: |
-            bash
-            -c
-            echo 'hello world'
-          oci: true
-
+          base-image: ${{ env.BASE_IMAGE }}
+          containerfiles: |
+            ./Dockerfile
       # Push the image to GHCR (Image Registry)
       - name: Push To GHCR
         uses: ./
