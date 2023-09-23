@@ -43,6 +43,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: ${{ env.IMAGE_NAME }}
+          layers: true
           tags: ${{ env.IMAGE_TAGS }}
           base-image: ${{ env.BASE_IMAGE }}
           containerfiles: |
