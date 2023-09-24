@@ -47,9 +47,10 @@ RUN set -xe; \
     cd /lobsters; \
     su lobsters -c "gem install bundler --user-install"; \
     su lobsters -c "gem update"; \
-    su lobsters -c "gem install rake -v 13.0.1"; \
+    su lobsters -c "gem install rake"; \
     su lobsters -c "bundle config set no-cach 'true'"; \
     su lobsters -c "bundle install"; \
+    su lobsters -c "bundle --full-index"; \
     if [ "${DEVELOPER_BUILD,,}" != "true" ]; \
     then \
         apk del .build-deps; \
