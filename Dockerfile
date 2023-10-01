@@ -1,7 +1,7 @@
 # Lobsters
 #
 # VERSION latest
-ARG BASE_IMAGE=ruby:2.7-alpine
+ARG BASE_IMAGE=ruby:3.2.2-alpine
 FROM ${BASE_IMAGE}
 
 # Create lobsters user and group.
