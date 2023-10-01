@@ -45,10 +45,12 @@ RUN set -xe; \
     export GEM_PATH="/lobsters/.gem"; \
     export BUNDLE_PATH="/lobsters/.bundle"; \
     cd /lobsters; \
+    echo "gem 'date', '3.3.3'" >> Gemfile; \
+    echo "gem 'timeout', '0.4.0'" >> Gemfile; \
     su lobsters -c "gem install bundler --user-install"; \
-    su lobsters -c "gem install date timeout rake"; \
+    su lobsters -c "gem install rake"; \
     su lobsters -c "gem update"; \
-    su lobsters -c "bundle config set no-cach 'true'"; \
+    su lobsters -c "bundle config set no-cache 'true'"; \
     su lobsters -c "bundle install"; \
     su lobsters -c "bundle --full-index"; \
     if [ "${DEVELOPER_BUILD,,}" != "true" ]; \
