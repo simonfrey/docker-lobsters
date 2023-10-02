@@ -47,7 +47,7 @@ RUN set -xe; \
     cd /lobsters; \
     echo "gem 'date', '3.3.3'" >> Gemfile; \
     echo "gem 'timeout', '0.4.0'" >> Gemfile; \
-    sed -i -e 's/"rails"/\'rails\', \'7.0.0\'/g' Gemfile; \
+    sed -i -e 's/"rails"/"rails", "7.0.0"/g' Gemfile; \
     su lobsters -c "gem install bundler --user-install"; \
     su lobsters -c "gem install rake"; \
     su lobsters -c "gem update"; \
