@@ -48,9 +48,9 @@ RUN set -xe; \
     echo "gem 'date', '3.3.3'" >> Gemfile; \
     echo "gem 'timeout', '0.4.0'" >> Gemfile; \
     sed -i -e 's/"rails"/"rails", "7.0.0"/g' Gemfile; \
-    su lobsters -c "gem install bundler --user-install"; \
-    su lobsters -c "gem install rake"; \
-    su lobsters -c "gem update"; \
+    su lobsters -c "gem install bundler --user-install --source http://rubygems.org"; \
+    su lobsters -c "gem install rake --source http://rubygems.org"; \
+    su lobsters -c "gem update --source http://rubygems.org"; \
     su lobsters -c "bundle config set no-cache 'true'"; \
     su lobsters -c "bundle install"; \
     su lobsters -c "bundle --full-index"; \
