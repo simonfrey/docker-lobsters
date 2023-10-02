@@ -1,7 +1,7 @@
 # Lobsters
 #
 # VERSION latest
-ARG BASE_IMAGE=ruby:3.2.2-alpine
+ARG BASE_IMAGE=docker.io/ruby:3.2.2-alpine
 FROM ${BASE_IMAGE}
 
 # Create lobsters user and group.
@@ -52,12 +52,10 @@ RUN set -xe; \
     su lobsters -c "gem install rake --source http://rubygems.org"; \
     su lobsters -c "gem update --source http://rubygems.org"; \
     su lobsters -c "bundle config set no-cache 'true'"; \
+    rm Gemfile.lock; \
     su lobsters -c "bundle install"; \
     su lobsters -c "bundle --full-index"; \
-    if [ "${DEVELOPER_BUILD,,}" != "true" ]; \
-    then \
-        apk del .build-deps; \
-    fi; \
+    apk del .build-deps; \
     mv /lobsters/Gemfile /lobsters/Gemfile.bak; \
     mv /lobsters/Gemfile.lock /lobsters/Gemfile.lock.bak;
 
